@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { AuthService } from 'src/auth/auth.service';
 
 export interface User {
   name: string;
@@ -30,11 +36,20 @@ export class UsersService {
     },
   ];
 
+  constructor(
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
+  ) {}
+
   public createUser(user: User) {
     this.users.push(user);
   }
 
   public getUsers(name?: string) {
+    const authenticated = this.authService.isAuthenticated();
+    if (!authenticated) {
+      throw new UnauthorizedException('Unauthorized');
+    }
     if (name) {
       return this.users.filter((user) => user.name === name);
     }
