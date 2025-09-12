@@ -6,7 +6,25 @@ export class PostsService {
   constructor(private readonly usersService: UsersService) {}
 
   public findAll(id: number) {
-    console.log(id);
-    console.log(this.usersService.getUsers());
+    return [
+      {
+        user: this.usersService.findUserById(id),
+        posts: [
+          {
+            title: 'Post 1',
+            content: 'Content 1',
+          },
+        ],
+      },
+      {
+        user: this.usersService.findUserById(id),
+        posts: [
+          {
+            title: 'Post 2',
+            content: 'Content 2',
+          },
+        ],
+      },
+    ];
   }
 }
