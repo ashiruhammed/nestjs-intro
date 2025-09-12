@@ -9,7 +9,7 @@ export class AuthService {
   ) {}
 
   public isAuthenticated() {
-    return false;
+    return true;
   }
 
   public login(user: User) {

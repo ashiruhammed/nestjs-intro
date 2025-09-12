@@ -45,16 +45,45 @@ export class UsersService {
     this.users.push(user);
   }
 
-  public getUsers(name?: string) {
+  public getUsers(
+    name?: string,
+    email?: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
     const authenticated = this.authService.isAuthenticated();
     if (!authenticated) {
       throw new UnauthorizedException('Unauthorized');
     }
+
+    let filteredUsers = this.users;
+
+    // Filter by name if provided
     if (name) {
-      return this.users.filter((user) => user.name === name);
+      filteredUsers = filteredUsers.filter((user) =>
+        user.name.toLowerCase().includes(name.toLowerCase()),
+      );
     }
 
-    return this.users;
+    // Filter by email if provided
+    if (email) {
+      filteredUsers = filteredUsers.filter((user) =>
+        user.email.toLowerCase().includes(email.toLowerCase()),
+      );
+    }
+
+    // Pagination
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+
+    return {
+      data: paginatedUsers,
+      total: filteredUsers.length,
+      page,
+      limit,
+      totalPages: Math.ceil(filteredUsers.length / limit),
+    };
   }
 
   public findUserById(id: number) {
