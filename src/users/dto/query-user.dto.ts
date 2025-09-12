@@ -7,8 +7,10 @@ import {
   Max,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class QueryUserDto {
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   name?: string;
