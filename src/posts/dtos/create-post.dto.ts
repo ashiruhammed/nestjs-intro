@@ -9,9 +9,11 @@ import {
   IsDate,
   IsArray,
   IsObject,
+  ValidateNested,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import { CreatePostMetaOptionsDto } from './create-post-metaoptions.dto';
 
 export class CreatePostDto {
   @ApiProperty({
@@ -92,14 +94,13 @@ export class CreatePostDto {
       type: 'object',
       properties: {
         key: { type: 'string', example: 'sidebarEnabled' },
-        value: { type: 'boolean', example: true },
+        value: { type: 'any', example: true },
       },
     },
   })
   @IsArray()
   @IsObject({ each: true })
-  metaOptions: Array<{
-    key: string;
-    value: boolean;
-  }>;
+  @ValidateNested()
+  @Type(() => CreatePostMetaOptionsDto)
+  metaOptions: Array<CreatePostMetaOptionsDto>;
 }
