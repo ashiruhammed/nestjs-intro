@@ -31,7 +31,8 @@ export class PostsController {
   })
   @Get('/:id')
   public findAll(@Param('id', ParseIntPipe) id: number) {
-    return this.postsService.findAll(id);
+    console.log(id);
+    // return this.postsService.findAll(id);
   }
 
   @ApiOperation({ summary: 'Create a new post' })

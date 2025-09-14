@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { User, UsersService } from 'src/users/providers/users.service';
+import { UsersService } from 'src/users/providers/users.service';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
   }
 
   public login(user: User) {
-    return this.usersService.createUser(user);
+    console.log(user);
+    // return this.usersService.createUser(user);
   }
 }

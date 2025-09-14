@@ -4,12 +4,18 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+  })
   name: string;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   email: string;
 
-  @Column()
-  phoneNumber: number;
+  @Column({
+    type: 'varchar',
+  })
+  phoneNumber: string;
 }
