@@ -18,7 +18,6 @@ export class PostsService {
   }
 
   public createPost(body: CreatePostDto) {
-    const post = this.postsRepository.create(body);
-    return this.postsRepository.save(post);
+    console.log(body);
   }
 }

@@ -9,6 +9,9 @@ import { User } from './users/user.entity';
 import { Post } from './posts/posts.entity';
 import { TagsModule } from './tags/tags.module';
 import { Tag } from './tags/tags.entity';
+import { MetaOptionController } from './meta-option/meta-option.controller';
+import { MetaOptionModule } from './meta-option/meta-option.module';
+import { MetaOption } from './meta-option/meta-option.entity';
 
 @Module({
   imports: [
@@ -25,13 +28,15 @@ import { Tag } from './tags/tags.entity';
         username: 'postgres',
         password: 'ashiru123@',
         database: 'postgres',
-        entities: [User, Post, Tag],
+        entities: [User, Post, Tag, MetaOption],
         synchronize: true,
+        autoLoadEntities: true,
       }),
     }),
     TagsModule,
+    MetaOptionModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, MetaOptionController],
   providers: [AppService],
 })
 export class AppModule {}

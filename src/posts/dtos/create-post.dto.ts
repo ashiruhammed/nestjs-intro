@@ -13,7 +13,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { CreatePostMetaOptionsDto } from './create-post-metaoptions.dto';
+import { CreatePostMetaOptionsDto } from '../../meta-option/dtos/create-post-metaoptions.dto';
 
 export class CreatePostDto {
   @ApiProperty({
