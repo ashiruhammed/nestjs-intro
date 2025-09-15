@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/user.entity';
 import { Post } from './posts/posts.entity';
+import { TagsModule } from './tags/tags.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { Post } from './posts/posts.entity';
         synchronize: true,
       }),
     }),
+    TagsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
