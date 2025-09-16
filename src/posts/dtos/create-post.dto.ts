@@ -11,6 +11,7 @@ import {
   IsObject,
   ValidateNested,
   IsOptional,
+  IsNumber,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -103,4 +104,14 @@ export class CreatePostDto {
   @ValidateNested()
   @Type(() => CreatePostMetaOptionsDto)
   metaOptions: CreatePostMetaOptionsDto | undefined;
+
+  @ApiProperty({
+    description: 'The author of the post',
+    type: 'number',
+    required: true,
+    example: 1,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  author: number;
 }

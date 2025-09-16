@@ -18,4 +18,8 @@ export class UsersService {
     const user = this.usersRepository.create(createUserDto);
     return this.usersRepository.save(user);
   }
+
+  public async findById(id: number) {
+    return this.usersRepository.findOne({ where: { id } });
+  }
 }

@@ -21,7 +21,9 @@ export class PostsService {
   }
 
   public findAll() {
-    return this.postsRepository.find();
+    return this.postsRepository.find({
+      relations: ['author', 'metaOptions'],
+    });
   }
 
   public async deletePost(id: number) {
@@ -48,7 +50,15 @@ export class PostsService {
   }
 
   public async createPost(body: CreatePostDto) {
-    const post = this.postsRepository.create(body);
+    const author = await this.usersService.findById(body.author);
+    if (!author) {
+      throw new NotFoundException('Author not found');
+    }
+
+    const post = this.postsRepository.create({
+      ...body,
+      author,
+    });
     return this.postsRepository.save(post);
   }
 }
