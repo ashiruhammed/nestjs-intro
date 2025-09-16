@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -30,9 +31,23 @@ export class PostsController {
     description: 'Post not found',
   })
   @Get('/:id')
-  public findAll(@Param('id', ParseIntPipe) id: number) {
+  public findById(@Param('id', ParseIntPipe) id: number) {
     console.log(id);
-    // return this.postsService.findAll(id);
+    return this.postsService.findById(id);
+  }
+
+  @ApiOperation({ summary: 'Get all posts' })
+  @ApiResponse({
+    status: 200,
+    description: 'Posts found successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Posts not found',
+  })
+  @Get()
+  public findAll() {
+    return this.postsService.findAll();
   }
 
   @ApiOperation({ summary: 'Create a new post' })
@@ -48,5 +63,19 @@ export class PostsController {
   @Post()
   public createPost(@Body() body: CreatePostDto) {
     return this.postsService.createPost(body);
+  }
+
+  @ApiOperation({ summary: 'Delete a post' })
+  @ApiResponse({
+    status: 200,
+    description: 'Post deleted successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Post not found',
+  })
+  @Delete('/:id')
+  public deletePost(@Param('id', ParseIntPipe) id: number) {
+    return this.postsService.deletePost(id);
   }
 }
