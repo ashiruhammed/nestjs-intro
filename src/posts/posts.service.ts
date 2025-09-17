@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MetaOption } from 'src/meta-option/meta-option.entity';
 import { UsersService } from 'src/users/providers/users.service';
@@ -52,21 +57,30 @@ export class PostsService {
   }
 
   public async createPost(body: CreatePostDto) {
-    const author = await this.usersService.findById(body.author);
-    if (!author) {
-      throw new NotFoundException('Author not found');
-    }
+    try {
+      const author = await this.usersService.findById(body.author);
+      if (!author) {
+        throw new NotFoundException('Author not found');
+      }
 
-    const tags = await this.tagService.findMultipleTags(body.tags);
-    if (!tags) {
-      throw new NotFoundException('Tags not found');
-    }
+      const tags = await this.tagService.findMultipleTags(body.tags);
+      if (!tags) {
+        throw new NotFoundException('Tags not found');
+      }
 
-    const post = this.postsRepository.create({
-      ...body,
-      author,
-      tags,
-    });
-    return this.postsRepository.save(post);
+      const post = this.postsRepository.create({
+        ...body,
+        author,
+        tags,
+      });
+      return this.postsRepository.save(post);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new RequestTimeoutException('Could not create post', {
+        description: 'Could not create post',
+      });
+    }
   }
 }
