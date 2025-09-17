@@ -1,10 +1,13 @@
+import { Post } from 'src/posts/posts.entity';
 import {
   Column,
-  PrimaryGeneratedColumn,
-  Entity,
   CreateDateColumn,
-  UpdateDateColumn,
   DeleteDateColumn,
+  JoinTable,
+  Entity,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('tags')
@@ -65,4 +68,9 @@ export class Tag {
     nullable: true,
   })
   schema: string;
+
+  @ManyToMany(() => Post, (post) => post.tags, {
+    onDelete: 'CASCADE',
+  })
+  posts: Post[];
 }

@@ -3,6 +3,8 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -10,6 +12,7 @@ import {
 import { PostStatus } from './enums/postStatus';
 import { PostType } from './enums/postType';
 import { User } from 'src/users/user.entity';
+import { Tag } from 'src/tags/tags.entity';
 
 @Entity()
 export class Post {
@@ -44,7 +47,9 @@ export class Post {
     array: true,
     default: [],
   })
-  tags: string[];
+  @ManyToMany(() => Tag, (tag) => tag.posts)
+  @JoinTable()
+  tags: Tag[] | null;
 
   @Column({
     type: 'timestamp',

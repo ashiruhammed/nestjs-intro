@@ -68,15 +68,13 @@ export class CreatePostDto {
 
   @ApiProperty({
     description: 'Tags associated with the post',
-    example: ['javascript', 'nestjs', 'backend'],
+    example: [1, 2, 3],
     type: [String],
     minItems: 1,
   })
   @IsArray()
-  @IsString({ each: true })
   @IsNotEmpty()
-  @MinLength(3, { each: true })
-  tags: string[];
+  tags: number[];
 
   @ApiProperty({
     description: 'The date when the post should be published',

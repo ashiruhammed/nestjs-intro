@@ -5,6 +5,7 @@ import { UsersService } from 'src/users/providers/users.service';
 import { Repository } from 'typeorm';
 import { CreatePostDto } from './dtos/create-post.dto';
 import { Post } from './posts.entity';
+import { TagService } from 'src/tags/tag.service';
 
 @Injectable()
 export class PostsService {
@@ -14,6 +15,7 @@ export class PostsService {
     private postsRepository: Repository<Post>,
     @InjectRepository(MetaOption)
     private readonly metaOptionRepository: Repository<MetaOption>,
+    private readonly tagService: TagService,
   ) {}
 
   public findById(id: number) {
@@ -55,9 +57,15 @@ export class PostsService {
       throw new NotFoundException('Author not found');
     }
 
+    const tags = await this.tagService.findMultipleTags(body.tags);
+    if (!tags) {
+      throw new NotFoundException('Tags not found');
+    }
+
     const post = this.postsRepository.create({
       ...body,
       author,
+      tags,
     });
     return this.postsRepository.save(post);
   }
