@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from 'src/auth/auth.service';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '../user.entity';
 
@@ -17,6 +17,8 @@ export class UsersService {
     private readonly authService: AuthService,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+
+    private readonly dataSource: DataSource,
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
@@ -66,6 +68,33 @@ export class UsersService {
       throw new BadRequestException(
         'Could not retrieve users. Please try again later.',
       );
+    }
+  }
+
+  public async createManyUsers(users: CreateUserDto[]) {
+    //Create Query Runner Instance
+    // connect query runner to datasourace
+    // create transaction
+    // insert users
+    // commit transaction
+    // return users.length
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      for (const user of users) {
+        const newUser = queryRunner.manager.create(User, user);
+
+        return await queryRunner.manager.save(newUser);
+      }
+      await queryRunner.commitTransaction();
+      return users.length;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
   }
 }
