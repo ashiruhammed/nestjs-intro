@@ -3,6 +3,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from 'src/auth/providers/auth.service';
@@ -62,6 +63,20 @@ export class UsersService {
       return user;
     } catch {
       throw new BadRequestException(
+        'Could not find user. Please try again later.',
+      );
+    }
+  }
+
+  public async findByEmail(email: string) {
+    try {
+      const user = await this.usersRepository.findOne({ where: { email } });
+      if (!user) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+      return user;
+    } catch {
+      throw new UnauthorizedException(
         'Could not find user. Please try again later.',
       );
     }
