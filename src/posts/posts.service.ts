@@ -11,6 +11,8 @@ import { Repository } from 'typeorm';
 import { CreatePostDto } from './dtos/create-post.dto';
 import { Post } from './posts.entity';
 import { TagService } from 'src/tags/tag.service';
+import { PaginatedProvider } from 'src/common/pagination/providers/paginated.provider';
+import { PaginatedQueryDto } from 'src/common/pagination/dto';
 
 @Injectable()
 export class PostsService {
@@ -21,16 +23,15 @@ export class PostsService {
     @InjectRepository(MetaOption)
     private readonly metaOptionRepository: Repository<MetaOption>,
     private readonly tagService: TagService,
+    private readonly paginatedProvider: PaginatedProvider,
   ) {}
 
   public findById(id: number) {
     return this.postsRepository.findOne({ where: { id } });
   }
 
-  public findAll() {
-    return this.postsRepository.find({
-      relations: ['author', 'metaOptions'],
-    });
+  public findAll(query: PaginatedQueryDto) {
+    return this.paginatedProvider.paginate(query, this.postsRepository);
   }
 
   public async deletePost(id: number) {
