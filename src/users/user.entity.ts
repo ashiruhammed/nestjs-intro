@@ -18,7 +18,7 @@ export class User {
   @Column({
     type: 'varchar',
   })
-  phoneNumber: string;
+  password: string;
 
   @OneToMany(() => Post, (post) => post.author)
   posts: Post[];

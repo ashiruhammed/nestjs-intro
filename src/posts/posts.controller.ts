@@ -6,10 +6,12 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { CreatePostDto } from './dtos/create-post.dto';
 import { PostsService } from './posts.service';
+import { PaginatedQueryDto } from 'src/common/pagination/dto';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -46,8 +48,8 @@ export class PostsController {
     description: 'Posts not found',
   })
   @Get()
-  public findAll() {
-    return this.postsService.findAll();
+  public findAll(@Query() query: PaginatedQueryDto) {
+    return this.postsService.findAll(query);
   }
 
   @ApiOperation({ summary: 'Create a new post' })

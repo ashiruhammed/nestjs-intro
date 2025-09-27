@@ -5,10 +5,11 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from 'src/auth/providers/auth.service';
 import { DataSource, Repository } from 'typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '../user.entity';
+import { HashingProvider } from 'src/auth/providers/hasing.provider';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,8 @@ export class UsersService {
     private usersRepository: Repository<User>,
 
     private readonly dataSource: DataSource,
+    @Inject(forwardRef(() => HashingProvider))
+    private readonly hashingProvider: HashingProvider,
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
@@ -30,7 +33,12 @@ export class UsersService {
         throw new BadRequestException('User already exists');
       }
 
-      const user = this.usersRepository.create(createUserDto);
+      const user = this.usersRepository.create({
+        ...createUserDto,
+        password: await this.hashingProvider.hashPassword(
+          createUserDto.password,
+        ),
+      });
       return await this.usersRepository.save(user);
     } catch (error) {
       // If it's already a BadRequestException, re-throw it
