@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ApiBody } from '@nestjs/swagger';
+import { Auth } from 'src/auth/decorators/auth/auth.decorator';
+import { AuthType } from 'src/auth/enum/auth-type.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './providers/users.service';
-import { ApiBody } from '@nestjs/swagger';
-import { AcessTokenGuard } from 'src/auth/guard/acess-token/acess-token.guard';
 
 @Controller('users')
 export class UsersController {
@@ -11,6 +12,7 @@ export class UsersController {
   // name, email and phone number
 
   @Post()
+  @Auth(AuthType.None)
   public createUser(@Body() body: CreateUserDto) {
     return this.usersService.createUser(body);
   }
@@ -20,7 +22,6 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @UseGuards(AcessTokenGuard)
   @Post('many')
   @ApiBody({ type: [CreateUserDto] })
   public createManyUsers(@Body() body: CreateUserDto[]) {

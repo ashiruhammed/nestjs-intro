@@ -12,6 +12,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { CreatePostDto } from './dtos/create-post.dto';
 import { PostsService } from './posts.service';
 import { PaginatedQueryDto } from 'src/common/pagination/dto';
+import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -63,8 +64,19 @@ export class PostsController {
     description: 'Bad request - validation failed',
   })
   @Post()
-  public createPost(@Body() body: CreatePostDto) {
-    return this.postsService.createPost(body);
+  public createPost(
+    @Body() body: CreatePostDto,
+    @CurrentUser()
+    user: {
+      id: number;
+      email: string;
+      sub: number;
+    },
+  ) {
+    return this.postsService.createPost({
+      ...body,
+      author: user.sub,
+    });
   }
 
   @ApiOperation({ summary: 'Delete a post' })
