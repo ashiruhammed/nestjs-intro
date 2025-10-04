@@ -3,14 +3,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { MetaOption } from './meta-option/meta-option.entity';
 import { MetaOptionModule } from './meta-option/meta-option.module';
-import { Post } from './posts/posts.entity';
 import { PostsModule } from './posts/posts.module';
-import { Tag } from './tags/tags.entity';
 import { TagsModule } from './tags/tags.module';
-import { User } from './users/user.entity';
 import { UsersModule } from './users/users.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import jwtConfig from './auth/config/jwtConfig';
+import { JwtModule } from '@nestjs/jwt';
+import { AcessTokenGuard } from './auth/guard/acess-token/acess-token.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -18,25 +19,38 @@ import { UsersModule } from './users/users.module';
     PostsModule,
     AuthModule,
     MetaOptionModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     TypeOrmModule.forRootAsync({
-      imports: [],
-      inject: [],
-      useFactory: () => ({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+
+      useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: 'localhost',
-        port: 5431,
-        username: 'postgres',
-        password: 'ashiru123@',
-        database: 'postgres',
-        entities: [User, Post, Tag, MetaOption],
+        host: configService.get('DB_HOST'),
+        port: configService.get('DB_PORT'),
+        username: configService.get('DB_USERNAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_NAME'),
+
         synchronize: true,
         autoLoadEntities: true,
       }),
     }),
+    ConfigModule.forFeature(jwtConfig),
+    JwtModule.registerAsync(jwtConfig.asProvider()),
     TagsModule,
     MetaOptionModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AcessTokenGuard,
+    },
+  ],
 })
 export class AppModule {}

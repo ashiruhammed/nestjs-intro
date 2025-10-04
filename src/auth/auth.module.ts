@@ -4,6 +4,9 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from 'src/users/users.module';
 import { HashingProvider } from './providers/hasing.provider';
 import { BycriptProvider } from './providers/bycript.provider';
+import { ConfigModule } from '@nestjs/config';
+import jwtConfig from './config/jwtConfig';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   controllers: [AuthController],
@@ -14,7 +17,11 @@ import { BycriptProvider } from './providers/bycript.provider';
       useClass: BycriptProvider,
     },
   ],
-  imports: [forwardRef(() => UsersModule)],
+  imports: [
+    forwardRef(() => UsersModule),
+    ConfigModule.forFeature(jwtConfig),
+    JwtModule.registerAsync(jwtConfig.asProvider()),
+  ],
   exports: [AuthService, HashingProvider],
 })
 export class AuthModule {}
