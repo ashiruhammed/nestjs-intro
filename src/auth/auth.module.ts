@@ -7,6 +7,7 @@ import { BycriptProvider } from './providers/bycript.provider';
 import { ConfigModule } from '@nestjs/config';
 import jwtConfig from './config/jwtConfig';
 import { JwtModule } from '@nestjs/jwt';
+import { TokenService } from './providers/token.service';
 
 @Module({
   controllers: [AuthController],
@@ -16,6 +17,7 @@ import { JwtModule } from '@nestjs/jwt';
       provide: HashingProvider,
       useClass: BycriptProvider,
     },
+    TokenService,
   ],
   imports: [
     forwardRef(() => UsersModule),

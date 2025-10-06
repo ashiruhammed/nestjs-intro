@@ -28,7 +28,6 @@ export class AuthenticationGuardGuard implements CanActivate {
     ]) ?? [AuthenticationGuardGuard.defaultAuthType];
     const guards = authType.map((type) => this.authGuardMap[type]).flat();
     for (const guard of guards) {
-      console.log('guard', authType, this.authGuardMap, AuthType);
       const canActivate = await Promise.resolve(
         guard.canActivate(context),
       ).catch((error) => {

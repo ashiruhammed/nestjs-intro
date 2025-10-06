@@ -24,6 +24,8 @@ import { AuthenticationGuardGuard } from './auth/guard/authentication-guard/auth
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ConfigModule.forFeature(jwtConfig),
+    JwtModule.registerAsync(jwtConfig.asProvider()),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -40,8 +42,7 @@ import { AuthenticationGuardGuard } from './auth/guard/authentication-guard/auth
         autoLoadEntities: true,
       }),
     }),
-    ConfigModule.forFeature(jwtConfig),
-    JwtModule.registerAsync(jwtConfig.asProvider()),
+
     TagsModule,
     MetaOptionModule,
   ],
